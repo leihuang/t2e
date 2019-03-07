@@ -85,3 +85,25 @@ def simulate_times_iH0(func_iH0, r, seed=0):
     p = np.random.rand(len(r))
     return np.array([func_iH0(-np.log(p_)/r_) for r_, p_ in zip(r, p)])
 
+
+def get_cdf(x):
+    """
+
+    :param x:
+    :return:
+    """
+    y = np.array([i/len(x) for i in range(len(x))])
+    return np.sort(x), y
+
+
+def get_censored_data(t1, t2):
+    """
+
+    :param t1:
+    :param t2:
+    :return:
+    """
+    t = np.min(np.array([t1, t2]), axis=0)
+    s = np.array(np.array(t1) < np.array(t2), dtype='int')
+    return pd.DataFrame([t, s], index=['time', 'status']).T
+
