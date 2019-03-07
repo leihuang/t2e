@@ -9,7 +9,7 @@ from scipy.integrate import quad
 from scipy.optimize import fsolve
 
 
-def simulate_times(func_h0, r, seed=0, **kwargs):
+def simulate_times_h0(func_h0, r, seed=0, **kwargs):
     """
 
     :param func_h0:
@@ -28,13 +28,60 @@ def simulate_times(func_h0, r, seed=0, **kwargs):
     if 'xtol' not in kwargs:
         kwargs['xtol'] = 1e-6
 
+    func_h = lambda t: r_ * func_h0(t)
+    func_H0 = lambda t: quad(func_h0, 0, t, epsabs=1e-6, epsrel=1e-6)[0]
+
     t, d = [], []
     for r_, p_ in zip(r, p):
-        func_h = lambda t: func_h0(t) * r_
-        def func_H(t):
-            return quad(func_h, 0, t, epsabs=1e-6, epsrel=1e-6)[0]
-        g = lambda t: func_H(t) + np.log(p_)
+        g = lambda t: r_ * func_H0(t) + np.log(p_)
         t_ = fsolve(g, fprime=func_h, **kwargs)[0]
         t.append(t_)
         d.append(g(t_))
     return np.array(t), np.array(d)
+
+
+def simulate_times_H0(func_H0, r, func_h0=None, seed=0, **kwargs):
+    """
+
+    :param func_H0:
+    :param r:
+    :param func_h0:
+    :param seed:
+    :param kwargs:
+    :return:
+    """
+    np.random.seed(seed)
+    p = np.random.rand(len(r))
+
+    if 'x0' not in kwargs:
+        kwargs['x0'] = [1e-3]
+    if 'maxfev' not in kwargs:
+        kwargs['maxfev'] = 10000
+    if 'xtol' not in kwargs:
+        kwargs['xtol'] = 1e-6
+
+    t, d = [], []
+    for r_, p_ in zip(r, p):
+        g = lambda t: r_ * func_H0(t) + np.log(p_)
+        if func_h0 is not None:
+            func_h = lambda t: r_ * func_h0(t)
+            t_ = fsolve(g, fprime=func_h, **kwargs)[0]
+        else:
+            t_ = fsolve(g, fprime=None, **kwargs)[0]
+        t.append(t_)
+        d.append(g(t_))
+    return np.array(t), np.array(d)
+
+
+def simulate_times_iH0(func_iH0, r, seed=0):
+    """Simulate survival times using inverse baseline cumulative hazard function.
+
+    :param func_iH0:
+    :param r:
+    :param seed:
+    :return:
+    """
+    np.random.seed(seed)
+    p = np.random.rand(len(r))
+    return np.array([func_iH0(-np.log(p_)/r_) for r_, p_ in zip(r, p)])
+
