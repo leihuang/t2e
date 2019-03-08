@@ -74,7 +74,7 @@ def simulate_times_H0(func_H0, r, func_h0=None, seed=0, **kwargs):
 
 
 def simulate_times_iH0(func_iH0, r, seed=0):
-    """Simulate survival times using inverse baseline cumulative hazard function.
+    """Simulate event times using inverse baseline cumulative hazard function.
 
     :param func_iH0:
     :param r:
@@ -96,14 +96,14 @@ def get_cdf(x):
     return np.sort(x), y
 
 
-def get_censored_data(t1, t2):
+def get_censored_data(times_event, times_censoring):
     """
 
-    :param t1:
-    :param t2:
+    :param times_event:
+    :param times_censoring:
     :return:
     """
-    t = np.min(np.array([t1, t2]), axis=0)
-    s = np.array(np.array(t1) < np.array(t2), dtype='int')
+    t = np.min(np.array([times_event, times_censoring]), axis=0)
+    s = np.array(np.array(times_event) < np.array(times_censoring), dtype='int')
     return pd.DataFrame([t, s], index=['time', 'status']).T
 
