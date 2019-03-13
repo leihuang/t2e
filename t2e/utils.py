@@ -2,6 +2,7 @@
 """
 
 from __future__ import absolute_import, division, print_function
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ from scipy.integrate import quad
 from scipy.optimize import fsolve
 
 
-def simulate_times_h0(func_h0, r, seed=0, **kwargs):
+def simulate_times_h0(func_h0, r, seed=None, **kwargs):
     """
 
     :param func_h0:
@@ -18,7 +19,8 @@ def simulate_times_h0(func_h0, r, seed=0, **kwargs):
     :param kwargs:
     :return:
     """
-    np.random.seed(seed)
+    if seed is None:
+        np.random.seed(datetime.now())
     p = np.random.rand(len(r))
 
     if 'x0' not in kwargs:
@@ -40,7 +42,7 @@ def simulate_times_h0(func_h0, r, seed=0, **kwargs):
     return np.array(t), np.array(d)
 
 
-def simulate_times_H0(func_H0, r, func_h0=None, seed=0, **kwargs):
+def simulate_times_H0(func_H0, r, func_h0=None, seed=None, **kwargs):
     """
 
     :param func_H0:
@@ -50,7 +52,8 @@ def simulate_times_H0(func_H0, r, func_h0=None, seed=0, **kwargs):
     :param kwargs:
     :return:
     """
-    np.random.seed(seed)
+    if seed is None:
+        np.random.seed(datetime.now())
     p = np.random.rand(len(r))
 
     if 'x0' not in kwargs:
@@ -73,7 +76,7 @@ def simulate_times_H0(func_H0, r, func_h0=None, seed=0, **kwargs):
     return np.array(t), np.array(d)
 
 
-def simulate_times_iH0(func_iH0, r, seed=0):
+def simulate_times_iH0(func_iH0, r, seed=None):
     """Simulate event times using inverse baseline cumulative hazard function.
 
     :param func_iH0:
@@ -81,7 +84,8 @@ def simulate_times_iH0(func_iH0, r, seed=0):
     :param seed:
     :return:
     """
-    np.random.seed(seed)
+    if seed is None:
+        np.random.seed(datetime.now())
     p = np.random.rand(len(r))
     return np.array([func_iH0(-np.log(p_)/r_) for r_, p_ in zip(r, p)])
 
