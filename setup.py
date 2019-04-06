@@ -11,13 +11,9 @@ try:
 except ImportError:
     raise Exception('scikit-survival is not installed.')
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
 setuptools.setup(name='ttea',
                  version='0.1',
                  description='Time to event analysis',
-                 long_description=long_description,
                  author='Lei Huang',
                  author_email='lh389@cornell.edu',
                  url='https://github.com/leihuang/ttea',
