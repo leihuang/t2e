@@ -1,6 +1,16 @@
 from distutils.core import setup
 
 
+try:
+    import lifelines
+except ImportError:
+    raise Exception('lifelines is not installed.')
+
+try:
+    import sksurv
+except ImportError:
+    raise Exception('scikit-survival is not installed.')
+
 setup(name='ttea',
       version='0.1',
       description='Time to event analysis',
